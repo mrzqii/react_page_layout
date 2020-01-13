@@ -1,0 +1,23 @@
+
+.container_wrapper {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    border: 1px solid #FFF;
+    // background: RGBA(3, 18, 40, 1);
+    .container_title {
+        width: 100%;
+        text-align: left;
+        height: 38px;
+        font-size: 18px;
+        font-weight: 400;
+        color: #ffffff;
+        line-height: 38px;
+        text-indent: 10px;
+        background: linear-gradient(to right, rgba(10, 133, 190, 0.5), rgba(0, 0, 0, 0.5));
+        // border: 1px solid #fff
+    }
+    .layout {
+        width: 100%
+    }
+}

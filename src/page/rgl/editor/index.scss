@@ -1,0 +1,53 @@
+ 
+.editor_show_name{
+    color:  #5584FF;
+}
+ 
+.editor_box{
+    display:flex;
+    align-items: center;
+    margin: 10px 0;
+    padding-left: 20px;
+    padding-right: 5px;
+}
+.text{
+    font-size: 18px;
+    font-weight: 500;
+    background-color: #fff;
+    padding: 5px 20px
+}
+.editor_wrapper{
+    display:flex;
+    padding: 12px 20px;
+    justify-content:space-between;
+    align-items: center;
+    border-bottom: 1px solid #999;
+    .editor_name{
+        font-weight: 600;
+        font-size: 15px;
+    }
+}
+.editor_content{
+    // display: flex;
+    // flex-direction: column;
+    
+}
+.layout_editor_tree{
+    width: 100%;
+    padding: 0 10px;
+    background: #fff;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    .next-tree-node-label{
+        font-size: 14px;
+    }
+}
+.btn{
+    margin-top: 5px;
+    padding: 5px 10px;
+    width: 50px;
+    text-align: center;
+    background-color: #1890ff;
+    color:#FFF;
+    border-radius: 5px;
+}
