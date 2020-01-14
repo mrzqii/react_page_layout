@@ -13,7 +13,9 @@ li {
     width: 260px;
     height: 100%;
     border: 1px solid #eee;
-    background-color: #eee;
+    background-color: rgba(225,225,225,0.5);
+    box-shadow: -1px 0px 10px rgba(0,0,0,0.2);
+    z-index: 1;
     // position: relative;
     // z-index: 2;
     // position: absolute;
@@ -23,10 +25,13 @@ li {
     // transition: all 0.5s ease-out;
   }
   .navLeft_container {
-    width: 150px;
+    width: 260px;
     height: 100%;
     border: 1px solid #eee;
-    background-color: #eee;
+    background-color: rgba(225,225,225,0.5);
+    box-shadow: 1px 0px 10px rgba(0,0,0,0.2);
+    z-index: 1;
+ 
     // position: relative;
     // position: absolute;
     // top: 0;

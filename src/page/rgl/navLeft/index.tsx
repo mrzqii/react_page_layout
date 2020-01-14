@@ -1,5 +1,6 @@
 import React, { Component,  ReactNode } from 'react'
 import {ComlistOne} from '../type'
+import './index.scss'
 type Props = {
   onClick(type:ComlistOne): void
   children?: ReactNode
@@ -17,11 +18,14 @@ export default class NavLeft extends Component<Props, State> {
   }
   height: number = document.body.clientHeight
   render() {
-    return <div>
-        <ul>
+    return <div className="nl">
+        <div className="nl-title">
+          组件栏
+        </div>
+        <ul className='nl-content'>
             {this.state.comlist.map((item,i)=>{
                 return(
-                    <li key={i} onClick={()=>{
+                    <li className="nl-li" key={i} onClick={()=>{
                         this.props.onClick(item)
                     }}>
                         {item.value}

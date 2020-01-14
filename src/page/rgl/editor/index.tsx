@@ -14,9 +14,9 @@ type Props = {
     setOpenContainerId():void
     
 } 
-const initialState = {
+// const initialState = {
      
-}
+// }
 interface IState {
     [id: number]: any;
     containerId:number
@@ -55,9 +55,10 @@ class EditorTab extends Component<Props,   IState> {
     } else {
       if (item.type === 'input') {
         return (
-          <div key={index} className="editor_box">
+          <div key={index} className="editor_box input_box">
             <label>{item.text}</label>
             <input
+              className="edit_input"
               onChange={e => {
                 let val = e.target.value
                 let editorData = Fn.clone(this.state[id])
@@ -73,21 +74,16 @@ class EditorTab extends Component<Props,   IState> {
       } else if (item.type === 'show_name') {
         return (
           <div key={index} className="editor_box">
-            <label>组件名</label>
-            <input
-              className="editor_show_name"
-              readOnly={true}
-              value={item.text}
-              placeholder={item.text}
-            />
+            <label>组件名：</label>
+            <span>{item.text}</span>
           </div>
         )
       } else if (item.type === 'select') {
         return (
-          <div key={index} className="editor_box">
+          <div key={index} className="editor_box  input_box">
             <label>{item.text}</label>
             <select
-              style={{ width: '100%' }}
+              className="edit_input"
               value={this.state[id][item.field] || undefined}
               placeholder={item.text}
               onChange={(e:React.ChangeEvent<HTMLSelectElement>):void => {
@@ -110,10 +106,10 @@ class EditorTab extends Component<Props,   IState> {
         )
       } else if (item.type === 'selectIcon') {
         return (
-          <div key={index} className="editor_box">
+          <div key={index} className="editor_box  input_box">
             <label>{item.text}</label>
             <select
-              style={{ width: '100%' }}
+              className="edit_input"
               value={this.state[id][item.field]|| undefined}
               placeholder={item.text}
               onChange={(e:React.ChangeEvent<HTMLSelectElement>) => {
@@ -195,7 +191,8 @@ class EditorTab extends Component<Props,   IState> {
     let Save = (
       <div>
         <button
-          style={{ marginRight: '5px' }}
+          className="edit_btn"
+          style={{ margin: '0 5px' }}
           onClick={() => {
             this.props.saveData(true)
           }}
@@ -203,6 +200,7 @@ class EditorTab extends Component<Props,   IState> {
           最终保存
         </button>
         <button
+          className="edit_btn"
           onClick={() => {
             this.props.saveData(false)
           }}
@@ -215,16 +213,18 @@ class EditorTab extends Component<Props,   IState> {
       <div>
         <div className="editor_wrapper">
           <div className="editor_name">编辑栏</div>
-          {Save}
+          
         </div>
         <div className="editor_content">
-          <div className="editor_box">
+          <div className="editor_box ">
             <button
+              className="edit_btn hvr-buzz-out"
               title="请先选中需要删除的组件"
               onClick={this.props.deleteItem}
             >
               删除组件
             </button>
+            {Save}
           </div>
           {this.props.configData.map((item, index) => {
             return this.itemEditor(item, index)

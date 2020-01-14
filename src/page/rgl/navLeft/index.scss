@@ -1,0 +1,39 @@
+.nl {
+  .nl-title {
+    text-transform: uppercase;
+    padding: 5px 0;
+    display: inline-block;
+    font-size: 18px;
+    color: #3c4858;
+    white-space: nowrap;
+    font-weight: 400;
+    line-height: 30px;
+    overflow: hidden;
+    text-align: center;
+    display: block;
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 15px;
+      height: 1px;
+      width: calc(100% - 30px);
+      background-color: hsla(0, 0%, 71%, 0.3);
+    }
+  }
+  .nl-content {
+    padding: 5px 10px;
+    .nl-li {
+        text-align: left;
+        border-radius: 3px;
+        color: #3c4858;
+        text-transform: capitalize;
+        font-size: 14px;
+        padding: 10px 15px;
+        &:hover {
+            background: rgba(0,0,0,0.1);
+        }
+    }
+  }
+}
