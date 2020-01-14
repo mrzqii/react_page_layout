@@ -57,8 +57,10 @@ export default class RGL extends Component<{}, State > {
   }
   componentDidUpdate( ){
     // 实现开启多个容器警示效果功能
-    if(this.state.openContainerId){
-      this.state.openContainerId = -1
+    if(this.state.openContainerId===this.state.containerId){
+      this.setState({
+        openContainerId:-1
+      })
     }
   }
   componentDidMount(){
