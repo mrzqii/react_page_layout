@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.scss'
+import * as Fn from '../funcTool'
 type Props = {
     saveData(bool:boolean):void,
     deleteItem():void,
@@ -9,7 +10,7 @@ type Props = {
     configData:any[],
     storeData(isChecked:boolean, data:any):void,
     isContainerState:boolean,
-    isContainer(isChecked:boolean):void,
+    isContainer(isChecked:boolean,data:any):void,
     setOpenContainerId():void
     
 } 
@@ -18,20 +19,31 @@ const initialState = {
 }
 interface IState {
     [id: number]: any;
+    containerId:number
    
 }
 type State =  typeof initialState  
 class EditorTab extends Component<Props,   IState> {
   state:IState  = {
-
+    containerId:0
   }
-  componentWillReceiveProps(props:Props) {
-    if (this.props.containerId != props.containerId) {
-        this.setState({
-          [props.containerId]: props.value,
-        });
+  static getDerivedStateFromProps (nextProps:Props, preState:IState){
+    if(preState["containerId"] !==nextProps.containerId){
+      return {
+        [nextProps.containerId]: nextProps.value,
+        containerId:nextProps.containerId
+      }
+    }else {
+      return null
     }
   }
+  // UNSAFE_componentWillReceiveProps(props:Props) {
+  //   if (this.props.containerId !== props.containerId) {
+  //       this.setState({
+  //         [props.containerId]: props.value,
+  //       });
+  //   }
+  // }
   itemEditor = (item:any, index:number) => {
     let id = this.props.containerId
     if (typeof item === 'string') {
@@ -47,12 +59,13 @@ class EditorTab extends Component<Props,   IState> {
             <label>{item.text}</label>
             <input
               onChange={e => {
-                var val = e.target.value
-                this.state[id] = { ...this.state[id], [item.field]: val }
-                this.setState({ [id]: this.state[id] })
-                this.props.saveEditorData(this.state[id])
+                let val = e.target.value
+                let editorData = Fn.clone(this.state[id])
+                editorData = { ...editorData, [item.field]: val }
+                this.setState({ [id]: editorData })
+                this.props.saveEditorData(editorData)
               }}
-              value={this.state[id] ? this.state[id][item.field] : null}
+              value={this.state[id][item.field] || ""}
               placeholder={item.text}
             />
           </div>
@@ -75,13 +88,14 @@ class EditorTab extends Component<Props,   IState> {
             <label>{item.text}</label>
             <select
               style={{ width: '100%' }}
-              value={this.state[id] ? this.state[id][item.field] : null}
+              value={this.state[id][item.field] || undefined}
               placeholder={item.text}
               onChange={(e:React.ChangeEvent<HTMLSelectElement>):void => {
-                var val = e.target.value
-                this.state[id] = { ...this.state[id], [item.field]: val }
-                this.setState({ [id]: this.state[id] })
-                this.props.saveEditorData(this.state[id])
+                let val = e.target.value
+                let editorData = Fn.clone(this.state[id])
+                editorData = { ...editorData, [item.field]: val }
+                this.setState({ [id]: editorData })
+                this.props.saveEditorData(editorData)
               }}
             >
               {item.data.map((item:any) => {
@@ -100,13 +114,14 @@ class EditorTab extends Component<Props,   IState> {
             <label>{item.text}</label>
             <select
               style={{ width: '100%' }}
-              value={this.state[id] ? this.state[id][item.field] : null}
+              value={this.state[id][item.field]|| undefined}
               placeholder={item.text}
               onChange={(e:React.ChangeEvent<HTMLSelectElement>) => {
-                var val = e.target.value
-                this.state[id] = { ...this.state[id], [item.field]: val }
-                this.setState({ [id]: this.state[id] })
-                this.props.saveEditorData(this.state[id])
+                let val = e.target.value
+                let editorData = Fn.clone(this.state[id])
+                editorData = { ...editorData, [item.field]: val }
+                this.setState({ [id]: editorData })
+                this.props.saveEditorData(editorData)
               }}
             >
               {item.data.map((item:any) => {
@@ -131,7 +146,7 @@ class EditorTab extends Component<Props,   IState> {
             </select>
           </div>
         )
-      } else if (item.type == 'switch') {
+      } else if (item.type === 'switch') {
         let checked
         if (this.state[id]) {
       
@@ -154,14 +169,19 @@ class EditorTab extends Component<Props,   IState> {
               checked={checked}
               onChange={e => {
                 let isContainerState = this.props.isContainerState
-                var checked = e.target.checked
+                let checked = e.target.checked
                 // 当前容器是开启状态 && 点击checkbox又是开启 就是代表想开启同时开启两个容器 这个是不允许的
-                if(isContainerState ===true && checked==true)  {
+                if(isContainerState ===true && checked===true)  {
+                  console.log(1);
                   this.props.setOpenContainerId()
                   return
                 }
-                this.state[id] = { ...this.state[id], [item.field]: checked }
-                this.props.storeData(checked, this.state[id])
+                let editorData = Fn.clone(this.state[id])
+                this.setState({
+                  [id]:{ ...editorData, [item.field]: checked }
+                },()=>{
+                  this.props.storeData(checked, this.state[id])
+                })
               }}
             ></input>
           </div>
@@ -172,7 +192,6 @@ class EditorTab extends Component<Props,   IState> {
     }
   }
   render() {
-      console.log(this.props.configData)
     let Save = (
       <div>
         <button

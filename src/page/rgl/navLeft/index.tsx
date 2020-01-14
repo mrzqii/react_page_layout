@@ -1,4 +1,4 @@
-import React, { Component, MouseEvent, ReactNode } from 'react'
+import React, { Component,  ReactNode } from 'react'
 import {ComlistOne} from '../type'
 type Props = {
   onClick(type:ComlistOne): void

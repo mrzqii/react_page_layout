@@ -1,5 +1,4 @@
 import React from 'react';
- 
 import './App.css';
 import RGL from './page/rgl/index'
 // import  Menu  from './page/test/main'

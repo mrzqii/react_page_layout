@@ -15,9 +15,9 @@ const throttle = function (fn, delay) {
    */
   const getNewLayout5 = (data, key,newd)=>{
     return data.map(item=>{
-        if(item.id ==key){
+        if(item.id ===key){
               return {...item, editorData: newd}
-        }else if(item.id !=key && item.layout){
+        }else if(item.id !==key && item.layout){
             let temp = getNewLayout5(item.layout, key,newd)
             return {...item, layout: temp}
         }else {
@@ -31,13 +31,13 @@ const throttle = function (fn, delay) {
    */
   const getNewLayout4 = (data, key,isChecked)=>{
     return data.map(item=>{
-        if(item.id ==key){
+        if(item.id ===key){
             if (isChecked) {
                 return {...item, static: true}
             } else {
                 return {...item, static: false}
             }
-        }else if(item.id !=key && item.layout){
+        }else if(item.id !==key && item.layout){
             let temp = getNewLayout4(item.layout, key,isChecked)
             return {...item, layout: temp}
         }else {
@@ -54,7 +54,7 @@ const findTypeFromId = (data,id,type)=>{
       if(item.id===id){
         type = item.type
       }
-      if(item.id!=id && item.layout){
+      if(item.id!==id && item.layout){
         type = findTypeFromId(item.layout, id, type)
       }
     })
@@ -75,6 +75,29 @@ const findOpenContainerId = (data)=>{
     })
     return id
 }
-export {throttle,getNewLayout5,getNewLayout4,findTypeFromId,findOpenContainerId}
+/**
+ * 深拷贝
+ * @param {*} target 
+ * @param {*} map 
+ */
+const clone = (target, map = new WeakMap()) => {
+    if (typeof target === 'object') {
+      const isArray = Array.isArray(target)
+      let cloneTarget = isArray ? [] : {}
+      if (map.get(target)) {
+        return map.get(target)
+      }
+      map.set(target, cloneTarget)
+      const keys = isArray ? undefined : Object.keys(target)
+  
+      ;(keys || target).forEach((value, key) => {
+        if (keys) key = value
+        cloneTarget[key] = clone(target[key], map)
+      })
+      return cloneTarget
+    }
+    return target
+  }
+export {throttle,getNewLayout5,getNewLayout4,findTypeFromId,findOpenContainerId,clone}
 
  
