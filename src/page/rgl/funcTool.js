@@ -98,6 +98,46 @@ const clone = (target, map = new WeakMap()) => {
     }
     return target
   }
-export {throttle,getNewLayout5,getNewLayout4,findTypeFromId,findOpenContainerId,clone}
+/**
+ * 轻提示 showTips("请输入手机号和验证码", 200, 2)
+ * @param {*} content 
+ * @param {*} height 
+ * @param {*} time 
+ */
+  const showTips=(content, height, time) =>{
+      
+    //窗口的宽度  
+    const windowWidth = document.body.clientWidth
+    const container = document.createElement('div');
+    container.setAttribute('class', 'tipsClass');
+    container.innerHTML = content
+    const body  =document.querySelector("body")
+
+    body.appendChild(container);
+    const node  =document.querySelector('div.tipsClass')
+     
+    node.style.top = height + 'px'
+    node.style.left = (windowWidth / 2) - 350 / 2 + 'px'
+    node.style.position = 'absolute'
+    node.style.padding = '10px 16px'
+    node.style.background ='#fff'
+    node.style.boxShadow ='0 4px 12px rgba(0, 0, 0, 0.15)'
+    node.style.margin = '0 auto'
+    node.style.fontSize = '12px'
+    node.style.height = 'auto'
+    node.style.color = 'rgba(0, 0, 0, 0.65)'
+    node.style.borderRadius = '5px'
+    node.style.textAlign = 'center'
+    node.style.pointerEvents = 'all'
+    node.setAttribute('class', 'component-message-wrap-fadein');
+    node.style.display = 'inline-block'
+	setTimeout(function () { 
+		node.setAttribute('class', 'component-message-wrap-fadeout');
+		setTimeout(function(){
+			body.removeChild(node);
+		},2000)
+	}, (time * 1000));
+}
+export {throttle,getNewLayout5,getNewLayout4,findTypeFromId,findOpenContainerId,clone,showTips}
 
  

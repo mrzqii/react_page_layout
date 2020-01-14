@@ -22,7 +22,7 @@ interface IState {
     containerId:number
    
 }
-type State =  typeof initialState  
+// type State =  typeof initialState  
 class EditorTab extends Component<Props,   IState> {
   state:IState  = {
     containerId:0
@@ -172,7 +172,7 @@ class EditorTab extends Component<Props,   IState> {
                 let checked = e.target.checked
                 // 当前容器是开启状态 && 点击checkbox又是开启 就是代表想开启同时开启两个容器 这个是不允许的
                 if(isContainerState ===true && checked===true)  {
-                  console.log(1);
+                  Fn.showTips("请确保之前容器状态已关闭", 200, 2)
                   this.props.setOpenContainerId()
                   return
                 }

@@ -161,7 +161,7 @@ export default class RGL extends Component<{}, State > {
       if (newval.type === 'container' && theType === 'container') {
         // 添加的组件是container 点击的组件是container
         this.setOpenContainerId()
-        console.log('不能嵌套添加容器')
+        Fn.showTips("不能嵌套添加容器", 200, 2)
         return
       } else if (
         newval.type === 'container' &&
@@ -169,7 +169,7 @@ export default class RGL extends Component<{}, State > {
         theType !== ''
       ) {
         // 添加的组件是container 点击的组件不是container 点击的不是空白处
-        console.log('请先选中状态为开启的容器1')
+        Fn.showTips("请先选中状态为开启的容器1", 200, 2)
         return
       } else if (newval.type === 'container' && theType === '') {
         // 添加的组件是container 点击了空白处
@@ -213,7 +213,7 @@ export default class RGL extends Component<{}, State > {
       })
       if (!flag) {
         this.setOpenContainerId()
-        console.log('请先选中状态为开启的容器2')
+        Fn.showTips("请先选中状态为开启的容器2", 200, 2)
         return
       }
     } else {
@@ -372,14 +372,13 @@ export default class RGL extends Component<{}, State > {
     let isContainer = this.state.isContainer
    
     if (isContainer && isChecked) {
-      
-      console.log('请确保之前容器状态已关闭')
+      Fn.showTips("请确保之前容器状态已关闭", 200, 2)
       return
     }
     this.isContainer(isChecked,data)
   }
   render() {
-    console.log("render");
+     
     return (
       <div className="wrapper_container">
         {/* 左边导航 */}
