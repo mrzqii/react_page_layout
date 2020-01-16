@@ -1,38 +1,38 @@
 import React, { Component } from 'react'
-import GridLayout, { WidthProvider,Layout } from 'react-grid-layout'
+import GridLayout, { WidthProvider, Layout } from 'react-grid-layout'
 import NavLeft from './navLeft/index'
 import Editor from './editor/index'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import './index.scss'
-import {  ComlistOne } from './type'
+import { ComlistOne } from './type'
 import * as Fn from './funcTool'
-
+import axios from 'axios'
 import MyContainer from './component/mycontainer'
 import MyTest from './component/mytest'
 interface NewLayout extends Layout {
-  id:number
-  value:string
-  type:string
-  layout:NewLayout[],
-  editorData:object,
+  id: number
+  value: string
+  type: string
+  layout: NewLayout[]
+  editorData: object
 }
 interface State {
-  layout:NewLayout[]
-  containerId:number 
-  isContainer:boolean
-  openContainerId:number
-  containerType:string
+  layout: NewLayout[]
+  containerId: number
+  isContainer: boolean
+  openContainerId: number
+  containerType: string
 }
 interface AllComponent {
   [key: string]: any
-  container:typeof MyContainer
-  "test":typeof  MyTest
+  container: typeof MyContainer
+  test: typeof MyTest
 }
 const ReactGridLayout = WidthProvider(GridLayout)
-const allComponent:AllComponent = {
-  "container": MyContainer,
-  "test": MyTest
+const allComponent: AllComponent = {
+  container: MyContainer,
+  test: MyTest
 }
 /**
  * 初始位置x
@@ -42,36 +42,97 @@ const InitX: number = 15
  * 初始位置y
  */
 const InitY: number = 15
-export default class RGL extends Component<{}, State > {
-  editor:[] = []
-  id:number = 1 //  每个组件都有一个唯一的id
-  height:number = document.body.clientHeight
-  state:State  = {
+export default class RGL extends Component<{ isDisplay: boolean }, State> {
+  editor: [] = []
+  id: number = 1 //  每个组件都有一个唯一的id
+  height: number = document.body.clientHeight
+  state: State = {
     containerId: 0,
-    isContainer:false,
-    openContainerId:-1,
-    containerType:"",
-    layout: [
-      
-    ]
+    isContainer: false,
+    openContainerId: -1,
+    containerType: '',
+    layout: []
   }
-  componentDidUpdate( ){
+  componentDidUpdate() {
     // 实现开启多个容器警示效果功能
-    if(this.state.openContainerId===this.state.containerId){
+    if (this.state.openContainerId === this.state.containerId) {
       this.setState({
-        openContainerId:-1
+        openContainerId: -1
       })
     }
   }
-  componentDidMount(){
+  componentDidMount() {
     this.height = document.body.clientHeight
+    if (this.props.isDisplay) {
+      // 如果是演示页面的时候执行这个方法
+      this.displayInit()
+      return
+    }
+    this.needEditInit() // 如果是编辑状态的时候执行这个方法
   }
- 
-   /**
+  /**
+   * 编辑状态 获取初始数据
+   */
+  needEditInit = () => {
+    axios({
+      url: 'ly/style/getStyle.ht',
+      method: 'POST',
+      baseURL: 'http://47.108.28.1:8085/',
+      timeout: 30000,
+      data: {
+        id: 'test2'
+      }
+    })
+      .then(response => {
+        let res = response.data
+        // 返回的数据格式
+        // {
+        //   id: "test2"
+        //   style: "{"id":10,"isContainer":true,"layout":[{"id":8,"x
+        // }
+        let styleData = res.data.style
+        styleData = JSON.parse(styleData)
+        if (styleData) {
+          this.id = styleData.id // 当前的id 避免编辑的时候新增组件和之前组件id重合
+          this.setState({
+            // showNavAndEditor: true,
+            layout: styleData.layout,
+            isContainer: styleData.isContainer
+          })
+        }
+      })
+      .catch(() => {
+        this.setState({
+          // showNavAndEditor: true
+        })
+      })
+  }
+  /**
+   * 编辑好了 作为页面组件时 获取初始数据
+   */
+  displayInit = () => {
+    axios({
+      url: 'ly/style/getStyle.ht',
+      method: 'POST',
+      baseURL: 'http://47.108.28.1:8085/',
+      timeout: 30000,
+      data: {
+        id: 'test2'
+      }
+    }).then(res => {
+      let styleData = res.data.style
+      styleData = JSON.parse(styleData)
+      if (styleData) {
+        this.setState({ layout: styleData.layout })
+      }
+    })
+  }
+
+  /**
    * 改变布局（drag和resize）之后需要保存新的布局数据,其他回调函数不行
    */
-  onLayoutChange = (e:GridLayout.Layout[]) => {
-    let layout:NewLayout[] = Fn.clone(this.state.layout)
+  onLayoutChange = (e: GridLayout.Layout[]) => {
+    let layout: NewLayout[] = Fn.clone(this.state.layout)
     e.forEach(item => {
       layout.forEach(item2 => {
         if (item.i === String(item2.id)) {
@@ -82,7 +143,7 @@ export default class RGL extends Component<{}, State > {
         }
         if (item2.layout && item2.layout.length > 0) {
           item2.layout.forEach(item3 => {
-            if (item.i ===String(item3.id)) {
+            if (item.i === String(item3.id)) {
               item3.x = item.x
               item3.y = item.y
               item3.w = item.w
@@ -94,12 +155,11 @@ export default class RGL extends Component<{}, State > {
     })
     this.setState({ layout })
   }
-   /**
+  /**
    * 点击模块的时候设置数据
    */
-  setData = (item:any) => {
+  setData = (item: any) => {
     this.setState({
-      // openContainerId:null,
       containerId: item.id,
       containerType: item.type
     })
@@ -107,15 +167,15 @@ export default class RGL extends Component<{}, State > {
   /**
    * 点击模块的时候 需要设置更新数据
    */
-  componentClick = (e:React.MouseEvent, component:any, item:NewLayout) => {
+  componentClick = (e: React.MouseEvent, component: any, item: NewLayout) => {
     e.stopPropagation()
     let containerId = this.state.containerId
     if (containerId === item.id) return // 如果两次点击的是同一个组件 return
     this.editor = component.editorConfig // 保存 更新 编辑器的内容
     this.setData(item)
   }
-  getComponent = (item:NewLayout, index:number)  => {
-    let theType:string = item.type
+  getComponent = (item: NewLayout, index: number) => {
+    let theType: string = item.type
     if (allComponent.hasOwnProperty(theType)) {
       let Component = allComponent[theType]
       if (theType === 'container') {
@@ -123,8 +183,12 @@ export default class RGL extends Component<{}, State > {
           <div
             data-grid={item}
             key={item.id}
-            onClick={(e:React.MouseEvent) => this.componentClick(e, Component, item)}
-            className= {`component_wrapper ${this.state.openContainerId===(item.id)?"blink-1":""}`}
+            onClick={(e: React.MouseEvent) =>
+              this.componentClick(e, Component, item)
+            }
+            className={`component_wrapper ${
+              this.state.openContainerId === item.id ? 'blink-1' : ''
+            }`}
           >
             <Component
               data={item.editorData}
@@ -140,7 +204,9 @@ export default class RGL extends Component<{}, State > {
       return (
         <div
           key={item.id}
-          onClick={(e:React.MouseEvent) => this.componentClick(e, Component, item)}
+          onClick={(e: React.MouseEvent) =>
+            this.componentClick(e, Component, item)
+          }
           data-grid={item}
           className="component_wrapper"
         >
@@ -150,9 +216,9 @@ export default class RGL extends Component<{}, State > {
     }
     return null
   }
- 
-  changeLayout=(newval:ComlistOne):void=>{
-    let layout:NewLayout[] = Fn.clone(this.state.layout)
+
+  changeLayout = (newval: ComlistOne): void => {
+    let layout: NewLayout[] = Fn.clone(this.state.layout)
     let containerId = this.state.containerId
     let isContainer = this.state.isContainer
     let theType = Fn.findTypeFromId(layout, containerId, '') // 当前点击组件Id对应的type
@@ -161,7 +227,7 @@ export default class RGL extends Component<{}, State > {
       if (newval.type === 'container' && theType === 'container') {
         // 添加的组件是container 点击的组件是container
         this.setOpenContainerId()
-        Fn.showTips("不能嵌套添加容器", 200, 2)
+        Fn.showTips('不能嵌套添加容器', 200, 2)
         return
       } else if (
         newval.type === 'container' &&
@@ -169,12 +235,12 @@ export default class RGL extends Component<{}, State > {
         theType !== ''
       ) {
         // 添加的组件是container 点击的组件不是container 点击的不是空白处
-        Fn.showTips("请先选中状态为开启的容器1", 200, 2)
+        Fn.showTips('请先选中状态为开启的容器1', 200, 2)
         return
       } else if (newval.type === 'container' && theType === '') {
         // 添加的组件是container 点击了空白处
         layout.push({
-          i:String(this.id),
+          i: String(this.id),
           id: this.id,
           x: InitX,
           y: InitY,
@@ -184,7 +250,7 @@ export default class RGL extends Component<{}, State > {
           static: false,
           value: newval.value,
           layout: [],
-          editorData:{}
+          editorData: {}
         })
         this.id++
         this.setState({
@@ -197,7 +263,7 @@ export default class RGL extends Component<{}, State > {
         if (item.id === containerId && item.static === true) {
           flag = true
           item.layout.push({
-            i:String(this.id),
+            i: String(this.id),
             id: this.id,
             x: 0,
             y: item.layout.length * 2,
@@ -206,19 +272,19 @@ export default class RGL extends Component<{}, State > {
             type: newval.type,
             static: false,
             value: newval.value,
-            layout:[],
-            editorData:{}
+            layout: [],
+            editorData: {}
           })
         }
       })
       if (!flag) {
         this.setOpenContainerId()
-        Fn.showTips("请先选中状态为开启的容器2", 200, 2)
+        Fn.showTips('请先选中状态为开启的容器2', 200, 2)
         return
       }
     } else {
       layout.push({
-        i:String(this.id),
+        i: String(this.id),
         id: this.id,
         x: InitX,
         y: InitY,
@@ -228,12 +294,11 @@ export default class RGL extends Component<{}, State > {
         static: false,
         value: newval.value,
         layout: [],
-        editorData:{}
+        editorData: {}
       })
     }
     this.id++
 
-     
     this.setState({
       layout: layout
     })
@@ -241,7 +306,7 @@ export default class RGL extends Component<{}, State > {
   /**
    * 保存配置信息
    */
-  saveData = (bool:boolean) => {
+  saveData = (bool: boolean) => {
     let layout = this.state.layout
     if (bool) {
       layout.forEach(item => {
@@ -258,27 +323,27 @@ export default class RGL extends Component<{}, State > {
       id: this.id,
       isContainer: this.state.isContainer
     }
-    console.log("obj:",obj);
-    // Ajax.ajaxPost({
-    //   url: Api.saveStyle,
-    //   data: {
-    //     params: {
-    //       id: 'test2',
-    //       style: obj
-    //     }
-    //   }
-    // }).then(res => {
-    //   if (res.code == 0) {
-    //     console.log('保存成功')
-    //   }
-    // })
+    axios({
+      url: 'ly/style/saveStyle.ht',
+      method: 'POST',
+      baseURL: 'http://47.108.28.1:8085/',
+      timeout: 6000,
+      data: {
+        id: 'test2',
+        style: obj
+      }
+    }).then((res: any) => {
+      if (res.code == 0) {
+        console.log('保存成功')
+      }
+    })
   }
   /**
    * 删除组件
    */
-  deleteItem = () => {
-    let {containerId,isContainer } = this.state
-    let layout:NewLayout[] = Fn.clone(this.state.layout)
+  deleteItem = (): void => {
+    let { containerId, isContainer } = this.state
+    let layout: NewLayout[] = Fn.clone(this.state.layout)
     if (containerId === 0) return // 初始化 未点击组件的时候  就return
     layout.forEach((item, index) => {
       if (item.id === containerId) {
@@ -286,7 +351,7 @@ export default class RGL extends Component<{}, State > {
           // 当删除的这个是容器 是可填充状态的时候需要设置一下避免出错
           // this.state.isContainer = false
           this.setState({
-            isContainer:false
+            isContainer: false
           })
         }
         layout.splice(index, 1)
@@ -307,10 +372,10 @@ export default class RGL extends Component<{}, State > {
   /**
    * 获取当前点击模块对应的editor的数据 实现回填 初始值
    */
-  editorValue = ():object => {
+  editorValue = (): object => {
     let containerId = this.state.containerId
-    let layout:NewLayout[] = Fn.clone(this.state.layout)
-    let data:object = {}
+    let layout: NewLayout[] = Fn.clone(this.state.layout)
+    let data: object = {}
     layout.forEach(item => {
       if (item.id === containerId) {
         data = item.editorData
@@ -325,60 +390,60 @@ export default class RGL extends Component<{}, State > {
     })
     return data
   }
-  setOpenContainerId = ():void=>{
+  setOpenContainerId = (): void => {
     // 找到容器状态为开启的那个容器的Id
-    let id:number = Fn.findOpenContainerId(this.state.layout)  || -1
-    if(id && typeof id ==="number"){
+    let id: number = Fn.findOpenContainerId(this.state.layout) || -1
+    if (id && typeof id === 'number') {
       this.setState({
-        openContainerId:id
+        openContainerId: id
       })
     }
   }
   /**
    * 把编辑器的data保存到layout里面
    */
-  saveEditorData = (data:any):void => {
+  saveEditorData = (data: any): void => {
     let containerId = this.state.containerId
     let layout = this.state.layout
     let newdata = Fn.getNewLayout5(layout, containerId, data)
     this.setState({ layout: newdata })
   }
-    /**
+  /**
    *  是否是容器 切换函数 并保存editorData
    */
-  isContainer = (isChecked:boolean,data:any) => {
+  isContainer = (isChecked: boolean, data: any) => {
     let containerId = this.state.containerId
     if (containerId == null) {
       return
     }
-    let layout:NewLayout[] = Fn.clone(this.state.layout)
+    let layout: NewLayout[] = Fn.clone(this.state.layout)
 
     let newLayout = Fn.getNewLayout4(layout, containerId, isChecked)
-   
-  
-    this.setState({
-      isContainer:isChecked,
-      layout:newLayout
-    },()=>{
-      let newdata = Fn.getNewLayout5(newLayout, containerId, data)
-      this.setState({ layout: newdata,  })
 
-    })
+    this.setState(
+      {
+        isContainer: isChecked,
+        layout: newLayout
+      },
+      () => {
+        let newdata = Fn.getNewLayout5(newLayout, containerId, data)
+        this.setState({ layout: newdata })
+      }
+    )
   }
   /**
    * 点击容器的切换容器状态按钮 确保只能存在一个容器状态为开启
    */
-  storeData = (isChecked:boolean, data:any) => {
+  storeData = (isChecked: boolean, data: any) => {
     let isContainer = this.state.isContainer
-   
+
     if (isContainer && isChecked) {
-      Fn.showTips("请确保之前容器状态已关闭", 200, 2)
+      Fn.showTips('请确保之前容器状态已关闭', 200, 2)
       return
     }
-    this.isContainer(isChecked,data)
+    this.isContainer(isChecked, data)
   }
   render() {
-     
     return (
       <div className="wrapper_container">
         {/* 左边导航 */}
@@ -402,7 +467,7 @@ export default class RGL extends Component<{}, State > {
             ></div>
             <ReactGridLayout
               margin={[0, 0]}
-              onLayoutChange={(e:GridLayout.Layout[]) => {
+              onLayoutChange={(e: GridLayout.Layout[]) => {
                 this.onLayoutChange(e)
               }}
               compactType={null}
@@ -410,7 +475,7 @@ export default class RGL extends Component<{}, State > {
               preventCollision={true}
               layout={this.state.layout} // 虽然使用了data-grid 这个还是不能删
               cols={24} // 可以把页面分为多少个断点
-              rowHeight={ this.height / 62.46 }  // 垂直方向 单位grid的高度   //其实就是15 this.height / 62.46
+              rowHeight={this.height / 62.46} // 垂直方向 单位grid的高度   //其实就是15 this.height / 62.46
             >
               {this.state.layout.map((item, index) => {
                 return this.getComponent(item, index)
@@ -420,7 +485,7 @@ export default class RGL extends Component<{}, State > {
         </div>
         {/* 右边编辑部分 */}
         <div className="editor_container">
-          <Editor 
+          <Editor
             saveData={this.saveData}
             deleteItem={this.deleteItem}
             value={this.editorValue()} // 当前模块配置的数据
@@ -428,7 +493,7 @@ export default class RGL extends Component<{}, State > {
             containerId={this.state.containerId} // 当前点击容器的id
             configData={this.editor} // 初始化配置数据 生成组件
             storeData={this.storeData}
-            isContainerState =  {this.state.isContainer}
+            isContainerState={this.state.isContainer}
             isContainer={this.isContainer} //函数
             setOpenContainerId={this.setOpenContainerId} // 设置已经是开启状态的容器 产生闪烁的功能
           />

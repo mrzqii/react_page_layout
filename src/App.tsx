@@ -6,7 +6,7 @@ import RGL from './page/rgl/index'
 const App: React.FC = () => {
   return (
     <div className="App">
-      <RGL/>
+      <RGL isDisplay={false} />
        {/* <Test/> */}
        {/* <Menu/> */}
     </div>
