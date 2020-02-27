@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import './index.scss'
 import * as Fn from '../funcTool'
 type Props = {
-    saveData(bool:boolean):void,
     deleteItem():void,
     value:any,
     saveEditorData(data:any):void,
@@ -188,27 +187,6 @@ class EditorTab extends Component<Props,   IState> {
     }
   }
   render() {
-    let Save = (
-      <div>
-        <button
-          className="edit_btn"
-          style={{ margin: '0 5px' }}
-          onClick={() => {
-            this.props.saveData(true)
-          }}
-        >
-          最终保存
-        </button>
-        <button
-          className="edit_btn"
-          onClick={() => {
-            this.props.saveData(false)
-          }}
-        >
-          保存草稿
-        </button>
-      </div>
-    )
     return (
       <div>
         <div className="editor_wrapper">
@@ -224,7 +202,6 @@ class EditorTab extends Component<Props,   IState> {
             >
               删除组件
             </button>
-            {Save}
           </div>
           {this.props.configData.map((item, index) => {
             return this.itemEditor(item, index)

@@ -9,35 +9,43 @@ li {
   width: 100wh;
   height: 100vh;
   overflow: hidden;
+  .tool {
+    position: fixed;
+    top: 0px;
+    left: 300px;
+    z-index: 1;
+    padding: 10px;
+    background: rgba(0,0,0,0.1);
+    .tool_btn {
+      padding: 2px 3px;
+      text-align: center;
+      // background-color: #1890ff;
+      color: #FFF;
+      margin: 0 3px;
+      cursor: pointer;
+    }
+  }
   .editor_container {
     width: 260px;
     height: 100%;
     border: 1px solid #eee;
-    background-color: rgba(225,225,225,0.5);
+    background-color: rgba(44, 75, 125, 0.5);
     box-shadow: -1px 0px 10px rgba(0,0,0,0.2);
     z-index: 1;
-    // position: relative;
-    // z-index: 2;
-    // position: absolute;
-    // top: 0;
-    // right: 0;
-    // z-index: 100;
-    // transition: all 0.5s ease-out;
+    position: absolute;
+    top: 0;
+    right: 0;
   }
   .navLeft_container {
     width: 260px;
     height: 100%;
     border: 1px solid #eee;
-    background-color: rgba(225,225,225,0.5);
+    background-color: rgba(44, 75, 125, 0.5);
     box-shadow: 1px 0px 10px rgba(0,0,0,0.2);
     z-index: 1;
- 
-    // position: relative;
-    // position: absolute;
-    // top: 0;
-    // left: 0;
-    // z-index: 999999;
-    // transition: all 0.5s ease-out;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
   .main_container {
     flex: 1;

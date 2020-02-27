@@ -22,7 +22,9 @@ interface State {
   containerId: number
   isContainer: boolean
   openContainerId: number
-  containerType: string
+  containerType: string,
+  editorVisible:boolean,
+  navVisible:boolean
 }
 interface AllComponent {
   [key: string]: any
@@ -51,7 +53,9 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
     isContainer: false,
     openContainerId: -1,
     containerType: '',
-    layout: []
+    layout: [],
+    editorVisible:true,
+    navVisible:true
   }
   componentDidUpdate() {
     // 实现开启多个容器警示效果功能
@@ -333,8 +337,9 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
         style: obj
       }
     }).then((res: any) => {
-      if (res.code == 0) {
-        console.log('保存成功')
+      let data = res.data
+      if (data.code === '0') {
+        Fn.showTips('保存成功', 200, 2)
       }
     })
   }
@@ -443,14 +448,33 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
     }
     this.isContainer(isChecked, data)
   }
+  isShowNav=()=>{
+    this.setState({
+      navVisible:!this.state.navVisible
+    })
+  }
+  isShowEditor=()=>{
+    this.setState({
+      editorVisible:!this.state.editorVisible
+    })
+  }
   render() {
     return (
       <div className="wrapper_container">
+        <div className="tool">
+          <span className="tool_btn" onClick={this.isShowNav}>导航</span>
+          <span className="tool_btn" onClick={this.isShowEditor}>编辑栏</span>
+          <span className="tool_btn" onClick={()=>this.saveData(true)}>保存</span>
+          <span className="tool_btn" onClick={()=>this.saveData(false)}>存草稿</span>
+        </div>
         {/* 左边导航 */}
 
-        <div className={"navLeft_container"}>
+        {
+          this.state.navVisible?<div className={"navLeft_container"}>
           <NavLeft onClick={this.changeLayout}/>
-        </div>
+        </div>:null
+        }
+        
 
         {/* 中间部分 */}
         <div className="main_container">
@@ -474,7 +498,7 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
               className="layout1"
               preventCollision={true}
               layout={this.state.layout} // 虽然使用了data-grid 这个还是不能删
-              cols={24} // 可以把页面分为多少个断点
+              cols={96} // 可以把页面分为多少个断点 水平方向
               rowHeight={this.height / 62.46} // 垂直方向 单位grid的高度   //其实就是15 this.height / 62.46
             >
               {this.state.layout.map((item, index) => {
@@ -484,20 +508,24 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
           </div>
         </div>
         {/* 右边编辑部分 */}
-        <div className="editor_container">
-          <Editor
-            saveData={this.saveData}
-            deleteItem={this.deleteItem}
-            value={this.editorValue()} // 当前模块配置的数据
-            saveEditorData={this.saveEditorData}
-            containerId={this.state.containerId} // 当前点击容器的id
-            configData={this.editor} // 初始化配置数据 生成组件
-            storeData={this.storeData}
-            isContainerState={this.state.isContainer}
-            isContainer={this.isContainer} //函数
-            setOpenContainerId={this.setOpenContainerId} // 设置已经是开启状态的容器 产生闪烁的功能
-          />
-        </div>
+
+        {
+          this.state.editorVisible?
+          <div className="editor_container">
+            <Editor
+              deleteItem={this.deleteItem}
+              value={this.editorValue()} // 当前模块配置的数据
+              saveEditorData={this.saveEditorData}
+              containerId={this.state.containerId} // 当前点击容器的id
+              configData={this.editor} // 初始化配置数据 生成组件
+              storeData={this.storeData}
+              isContainerState={this.state.isContainer}
+              isContainer={this.isContainer} //函数
+              setOpenContainerId={this.setOpenContainerId} // 设置已经是开启状态的容器 产生闪烁的功能
+            />
+          </div>:null
+        }
+        
       </div>
     )
   }
