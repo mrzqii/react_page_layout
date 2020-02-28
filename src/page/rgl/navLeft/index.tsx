@@ -14,6 +14,7 @@ export default class NavLeft extends Component<Props, State> {
     comlist: [
       { value: '容器', type: 'container', icon: 'iconziyuan11' },
       { value: 'test', type: 'test', icon: 'iconziyuan11' },
+      { value: 'test2', type: 'test2', icon: 'iconziyuan11' },
     ]
   }
   height: number = document.body.clientHeight

@@ -8,8 +8,10 @@ import './index.scss'
 import { ComlistOne } from './type'
 import * as Fn from './funcTool'
 import axios from 'axios'
+import { MyContext } from './context.js'
 import MyContainer from './component/mycontainer'
 import MyTest from './component/mytest'
+import MyTest2 from './component/mytest2'
 interface NewLayout extends Layout {
   id: number
   value: string
@@ -22,19 +24,22 @@ interface State {
   containerId: number
   isContainer: boolean
   openContainerId: number
-  containerType: string,
-  editorVisible:boolean,
-  navVisible:boolean
+  containerType: string
+  editorVisible: boolean
+  navVisible: boolean,
+  filter:object
 }
 interface AllComponent {
   [key: string]: any
   container: typeof MyContainer
   test: typeof MyTest
+  test2:typeof MyTest2
 }
 const ReactGridLayout = WidthProvider(GridLayout)
 const allComponent: AllComponent = {
   container: MyContainer,
-  test: MyTest
+  test: MyTest,
+  test2:MyTest2
 }
 /**
  * 初始位置x
@@ -54,8 +59,9 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
     openContainerId: -1,
     containerType: '',
     layout: [],
-    editorVisible:true,
-    navVisible:true
+    editorVisible: true,
+    navVisible: true,
+    filter:{}
   }
   componentDidUpdate() {
     // 实现开启多个容器警示效果功能
@@ -448,85 +454,104 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
     }
     this.isContainer(isChecked, data)
   }
-  isShowNav=()=>{
+  isShowNav = () => {
     this.setState({
-      navVisible:!this.state.navVisible
+      navVisible: !this.state.navVisible
     })
   }
-  isShowEditor=()=>{
+  isShowEditor = () => {
     this.setState({
-      editorVisible:!this.state.editorVisible
+      editorVisible: !this.state.editorVisible
+    })
+  }
+  test = (data:any)=>{
+    this.setState({
+      filter:data
     })
   }
   render() {
     return (
-      <div className="wrapper_container">
-        <div className="tool">
-          <span className="tool_btn" onClick={this.isShowNav}>导航</span>
-          <span className="tool_btn" onClick={this.isShowEditor}>编辑栏</span>
-          <span className="tool_btn" onClick={()=>this.saveData(true)}>保存</span>
-          <span className="tool_btn" onClick={()=>this.saveData(false)}>存草稿</span>
-        </div>
-        {/* 左边导航 */}
-
-        {
-          this.state.navVisible?<div className={"navLeft_container"}>
-          <NavLeft onClick={this.changeLayout}/>
-        </div>:null
-        }
-        
-
-        {/* 中间部分 */}
-        <div className="main_container">
-          <div className="">
-            {/* 背景 */}
-            <div
-              style={{
-                position: 'absolute',
-                zIndex: 0,
-                width: '100%',
-                height: '100%',
-                background: '#ccc'
-              }}
-            ></div>
-            <ReactGridLayout
-              margin={[0, 0]}
-              onLayoutChange={(e: GridLayout.Layout[]) => {
-                this.onLayoutChange(e)
-              }}
-              compactType={null}
-              className="layout1"
-              preventCollision={true}
-              layout={this.state.layout} // 虽然使用了data-grid 这个还是不能删
-              cols={96} // 可以把页面分为多少个断点 水平方向
-              rowHeight={this.height / 62.46} // 垂直方向 单位grid的高度   //其实就是15 this.height / 62.46
-            >
-              {this.state.layout.map((item, index) => {
-                return this.getComponent(item, index)
-              })}
-            </ReactGridLayout>
+      <MyContext.Provider
+        value={{
+          data:{
+            filter:this.state.filter
+          },
+          test:this.test
+        }}
+      >
+        <div className="wrapper_container">
+          <div className="tool">
+            <span className="tool_btn" onClick={this.isShowNav}>
+              导航
+            </span>
+            <span className="tool_btn" onClick={this.isShowEditor}>
+              编辑栏
+            </span>
+            <span className="tool_btn" onClick={() => this.saveData(true)}>
+              保存
+            </span>
+            <span className="tool_btn" onClick={() => this.saveData(false)}>
+              存草稿
+            </span>
           </div>
-        </div>
-        {/* 右边编辑部分 */}
+          {/* 左边导航 */}
 
-        {
-          this.state.editorVisible?
-          <div className="editor_container">
-            <Editor
-              deleteItem={this.deleteItem}
-              value={this.editorValue()} // 当前模块配置的数据
-              saveEditorData={this.saveEditorData}
-              containerId={this.state.containerId} // 当前点击容器的id
-              configData={this.editor} // 初始化配置数据 生成组件
-              storeData={this.storeData}
-              isContainerState={this.state.isContainer}
-              isContainer={this.isContainer} //函数
-              setOpenContainerId={this.setOpenContainerId} // 设置已经是开启状态的容器 产生闪烁的功能
-            />
-          </div>:null
-        }
-        
-      </div>
+          {this.state.navVisible ? (
+            <div className={'navLeft_container'}>
+              <NavLeft onClick={this.changeLayout} />
+            </div>
+          ) : null}
+
+          {/* 中间部分 */}
+          <div className="main_container">
+            <div className="">
+              {/* 背景 */}
+              <div
+                style={{
+                  position: 'absolute',
+                  zIndex: 0,
+                  width: '100%',
+                  height: '100%',
+                  background: '#ccc'
+                }}
+              ></div>
+              <ReactGridLayout
+                margin={[0, 0]}
+                onLayoutChange={(e: GridLayout.Layout[]) => {
+                  this.onLayoutChange(e)
+                }}
+                compactType={null}
+                className="layout1"
+                preventCollision={true}
+                layout={this.state.layout} // 虽然使用了data-grid 这个还是不能删
+                cols={96} // 可以把页面分为多少个断点 水平方向
+                rowHeight={this.height / 62.46} // 垂直方向 单位grid的高度   //其实就是15 this.height / 62.46
+              >
+                {this.state.layout.map((item, index) => {
+                  return this.getComponent(item, index)
+                })}
+              </ReactGridLayout>
+            </div>
+          </div>
+          {/* 右边编辑部分 */}
+
+          {this.state.editorVisible ? (
+            <div className="editor_container">
+              <Editor
+                deleteItem={this.deleteItem}
+                value={this.editorValue()} // 当前模块配置的数据
+                saveEditorData={this.saveEditorData}
+                containerId={this.state.containerId} // 当前点击容器的id
+                configData={this.editor} // 初始化配置数据 生成组件
+                storeData={this.storeData}
+                isContainerState={this.state.isContainer}
+                isContainer={this.isContainer} //函数
+                setOpenContainerId={this.setOpenContainerId} // 设置已经是开启状态的容器 产生闪烁的功能
+              />
+            </div>
+          ) : null}
+        </div>
+      </MyContext.Provider>
     )
   }
 }
