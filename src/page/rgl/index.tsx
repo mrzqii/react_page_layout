@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import GridLayout, { WidthProvider, Layout } from 'react-grid-layout'
+import { CSSTransition } from 'react-transition-group'
 import NavLeft from './navLeft/index'
 import Editor from './editor/index'
 import 'react-grid-layout/css/styles.css'
@@ -26,20 +27,20 @@ interface State {
   openContainerId: number
   containerType: string
   editorVisible: boolean
-  navVisible: boolean,
-  filter:object
+  navVisible: boolean
+  filter: object
 }
 interface AllComponent {
   [key: string]: any
   container: typeof MyContainer
   test: typeof MyTest
-  test2:typeof MyTest2
+  test2: typeof MyTest2
 }
 const ReactGridLayout = WidthProvider(GridLayout)
 const allComponent: AllComponent = {
   container: MyContainer,
   test: MyTest,
-  test2:MyTest2
+  test2: MyTest2
 }
 /**
  * 初始位置x
@@ -61,7 +62,7 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
     layout: [],
     editorVisible: true,
     navVisible: true,
-    filter:{}
+    filter: {}
   }
   componentDidUpdate() {
     // 实现开启多个容器警示效果功能
@@ -464,19 +465,19 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
       editorVisible: !this.state.editorVisible
     })
   }
-  test = (data:any)=>{
+  test = (data: any) => {
     this.setState({
-      filter:data
+      filter: data
     })
   }
   render() {
     return (
       <MyContext.Provider
         value={{
-          data:{
-            filter:this.state.filter
+          data: {
+            filter: this.state.filter
           },
-          test:this.test
+          test: this.test
         }}
       >
         <div className="wrapper_container">
@@ -496,11 +497,21 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
           </div>
           {/* 左边导航 */}
 
-          {this.state.navVisible ? (
+          <CSSTransition
+            in={this.state.navVisible}
+            timeout={1000}
+            // <!-- classNames是钩子名，为后面的class名前缀 -->
+            classNames="nav_visible"
+            // <!-- unmountOnExit表示元素隐藏则相应的DOM被移除 -->
+            unmountOnExit
+            // <!-- appear设为true表示进场动画,CSS中有对应类名 -->
+            appear={true}
+            // <!--以下为动画钩子函数, 与CSS中相对应-->
+          >
             <div className={'navLeft_container'}>
               <NavLeft onClick={this.changeLayout} />
             </div>
-          ) : null}
+          </CSSTransition>
 
           {/* 中间部分 */}
           <div className="main_container">
@@ -534,8 +545,17 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
             </div>
           </div>
           {/* 右边编辑部分 */}
-
-          {this.state.editorVisible ? (
+          <CSSTransition
+            in={this.state.editorVisible}
+            timeout={1000}
+            // <!-- classNames是钩子名，为后面的class名前缀 -->
+            classNames="editor_visible"
+            // <!-- unmountOnExit表示元素隐藏则相应的DOM被移除 -->
+            unmountOnExit
+            // <!-- appear设为true表示进场动画,CSS中有对应类名 -->
+            appear={true}
+            // <!--以下为动画钩子函数, 与CSS中相对应-->
+          >
             <div className="editor_container">
               <Editor
                 deleteItem={this.deleteItem}
@@ -549,7 +569,7 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
                 setOpenContainerId={this.setOpenContainerId} // 设置已经是开启状态的容器 产生闪烁的功能
               />
             </div>
-          ) : null}
+          </CSSTransition>
         </div>
       </MyContext.Provider>
     )

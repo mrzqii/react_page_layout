@@ -15,12 +15,12 @@ li {
     left: 300px;
     z-index: 1;
     padding: 10px;
-    background: rgba(0,0,0,0.1);
+    background: rgba(0, 0, 0, 0.1);
     .tool_btn {
       padding: 2px 3px;
       text-align: center;
       // background-color: #1890ff;
-      color: #FFF;
+      color: #fff;
       margin: 0 3px;
       cursor: pointer;
     }
@@ -30,7 +30,7 @@ li {
     height: 100%;
     border: 1px solid #eee;
     background-color: rgba(44, 75, 125, 0.5);
-    box-shadow: -1px 0px 10px rgba(0,0,0,0.2);
+    box-shadow: -1px 0px 10px rgba(0, 0, 0, 0.2);
     z-index: 1;
     position: absolute;
     top: 0;
@@ -41,7 +41,7 @@ li {
     height: 100%;
     border: 1px solid #eee;
     background-color: rgba(44, 75, 125, 0.5);
-    box-shadow: 1px 0px 10px rgba(0,0,0,0.2);
+    box-shadow: 1px 0px 10px rgba(0, 0, 0, 0.2);
     z-index: 1;
     position: absolute;
     top: 0;
@@ -129,5 +129,57 @@ li {
   }
   100% {
     opacity: 0;
+  }
+}
+
+// 导航的显示隐藏
+
+.nav_visible-exit {
+  animation: slide-left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes slide-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-265px);
+  }
+}
+.nav_visible-enter {
+  animation: slide-right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes slide-right {
+  0% {
+    transform: translateX(-265px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+// 编辑器的显示
+.editor_visible-exit {
+  animation: editor_slide-right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes editor_slide-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(265px);
+  }
+}
+.editor_visible-enter {
+  animation: editor-slice-left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes editor-slice-left {
+  0% {
+    transform: translateX(265px);
+  }
+  100% {
+    transform: translateX(0px);
   }
 }
