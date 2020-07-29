@@ -12,6 +12,7 @@ import Regist from './page/regist'
 export default function App() {
     return (
       <Router>
+        fsfsffsfsf
           <Switch>
             <Route path="/" exact  component={Login}/>
             <Route path="/login" component={Login}/>
