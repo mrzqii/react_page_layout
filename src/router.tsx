@@ -20,9 +20,11 @@ export default function App() {
           </Switch>
       </Router>
     );
+
+    
   }
 
-  
+
 
   // function Permission(props:any) {
   //     return <Route {...props}/>
