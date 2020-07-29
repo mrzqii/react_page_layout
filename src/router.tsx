@@ -12,7 +12,7 @@ import Regist from './page/regist'
 export default function App() {
     return (
       <Router>
-        fsfsffsfsf
+        一定成功
         fsfs
         fsfs
           <Switch>
