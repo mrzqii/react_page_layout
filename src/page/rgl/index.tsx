@@ -86,9 +86,10 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
    */
   needEditInit = () => {
     axios({
-      url: 'ly/style/getStyle.ht',
+      url:'/api/style/getstyle',
       method: 'POST',
-      baseURL: 'http://47.108.28.1:8085/',
+      baseURL:'http://localhost:3005',
+      withCredentials:true,
       timeout: 30000,
       data: {
         id: 'test2'
@@ -96,6 +97,7 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
     })
       .then(response => {
         let res = response.data
+        console.log(res);
         // 返回的数据格式
         // {
         //   id: "test2"
@@ -123,9 +125,10 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
    */
   displayInit = () => {
     axios({
-      url: 'ly/style/getStyle.ht',
+      url:'/api/style/getstyle',
       method: 'POST',
-      baseURL: 'http://47.108.28.1:8085/',
+      baseURL:'http://localhost:3005',
+      withCredentials:true,
       timeout: 30000,
       data: {
         id: 'test2'
@@ -335,9 +338,10 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
       isContainer: this.state.isContainer
     }
     axios({
-      url: 'ly/style/saveStyle.ht',
+      url:'/api/style/save',
       method: 'POST',
-      baseURL: 'http://47.108.28.1:8085/',
+      withCredentials:true,
+      baseURL:'http://localhost:3005',
       timeout: 6000,
       data: {
         id: 'test2',
@@ -345,7 +349,8 @@ export default class RGL extends Component<{ isDisplay: boolean }, State> {
       }
     }).then((res: any) => {
       let data = res.data
-      if (data.code === '0') {
+      console.log(data);
+      if (data.code == 0) {
         Fn.showTips('保存成功', 200, 2)
       }
     })
