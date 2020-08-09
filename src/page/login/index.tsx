@@ -32,8 +32,8 @@ function Login() {
     }
     return (
         <div>
-            <div><label>电话</label><input type="text" value={tel} onChange={telChage}/></div>
-            <div><label>密码</label><input type="text" value={psd} onChange={psdChage} /></div>
+            <div><label>电话test</label><input type="text" value={tel} onChange={telChage}/></div>
+            <div><label>密码test</label><input type="text" value={psd} onChange={psdChage} /></div>
             <div onClick={submit}>提交</div>
         </div>
     )
